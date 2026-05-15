@@ -3,7 +3,7 @@
 A sleek, fast-paced web game built for the Hack Club community. Play it directly in your browser!
 
 👉 **[PLAY THE GAME LIVE HERE](https://github.com/Imay320/Clicker-game.git)**
-
+* 💻 **Source Code:** [Browse GitHub Files](https://github.com/Imay320/Clicker-game/edit/main/README.md)
 ---
 
 ## 🚀 How to Play
@@ -18,7 +18,7 @@ A sleek, fast-paced web game built for the Hack Club community. Play it directly
 ## 🧠 How I Built This & What I Learned
 To build this engine, I started with an AI-generated layout structure to help me understand how a single-file game loops and scales difficulty. From there, I took control and customized the code to make it my own:
 * **UI Overhaul:** I integrated Tailwind CSS utility classes to replace standard styling with a modern dark-mode aesthetic.
-* **Game Mechanics:** I modified the [Insert something you tweaked, e.g., *spawn rates / cost scaling / color schemes*] to optimize balance.
+
 
 ## 📂 How to Run Locally
 If you want to look under the hood or run this project on your own machine:
