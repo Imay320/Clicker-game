@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clicker Game</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </style>
+    </head><body class="bg-slate-950 text-white font-sans min-h-screen flex flex-col md:flex-row items-center justify-center p-6 gap-8 select-none">
+        <main class="flex flex-col items-center justify-center flex-1 max-w-sm w-full">
+            <header class="text-center mb-6">
+            <h1 class="text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+            </h1>
+            <p class="text-xs text-slate-400 tracking-widest uppercase mt-1">Hack club project engine</p>
+            </header>
+            
+        <div class="w-full bg-slate-900/60 border border-slate-800 rounded-2xl p-6 text-center shadow-xl backdrop-blur-sm mb-6">
+            <div id="codeDisplay" class="text-4xl font-mono font-black text-cyan-400 tracking-tight">0</div>
+            <div class="text-xs text-slate-400 font-semibold tracking-wider uppercase mt-1">Lines of Code (LoC)</div>
+            
+            <div class="h-px bg-slate-800 my-3"></div>
+            
+            <div class="text-sm font-medium text-slate-400">
+                Generation Speed: <span id="lpsDisplay" class="text-emerald-400 font-mono font-bold">0</span> LoC/sec
+            </div>
+        </div>
+
+        
+        <button id="clickBtn" class="click-active group relative w-56 h-56 rounded-full bg-gradient-to-tr from-slate-900 to-slate-800 border-4 border-cyan-500/80 neon-glow flex flex-col items-center justify-center cursor-pointer transition-all duration-100 hover:border-cyan-400">
+           
+            <div class="absolute inset-3 rounded-full border border-slate-700/50 group-hover:border-cyan-500/30 transition-colors"></div>
+            
+            
+            <span class="text-6xl mb-2 transition-transform duration-200 group-hover:scale-110">💻</span>
+            <span class="text-xs font-bold tracking-widest text-cyan-400/70 group-hover:text-cyan-400">COMPILE()</span>
+        </button>
+    </main>
+
+    
+    <section class="w-full max-w-md bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-2xl backdrop-blur-sm flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-slate-300 tracking-wide px-1 flex items-center gap-2">
+            <span>🛒</span> Upgrade Depot
+        </h2>
+
+        
+        <div id="upgrade-tier1" class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl transition-all">
+            <div>
+                <h3 class="font-bold text-sm text-white">AI Copilot</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Generates +1 LoC every second.</p>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Owned: <span id="owned-tier1" class="font-mono text-slate-300">0</span></p>
+            </div>
+            <button onclick="buyUpgrade('tier1')" id="btn-tier1" class="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors font-mono shadow-md shadow-cyan-950/20">
+                Cost: <span id="cost-tier1">15</span>
+            </button>
+        </div>
+
+       
+        <div id="upgrade-tier2" class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl transition-all">
+            <div>
+                <h3 class="font-bold text-sm text-white">Mechanical Keyboard</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Increases manual click power by +1.</p>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Owned: <span id="owned-tier2" class="font-mono text-slate-300">0</span></p>
+            </div>
+            <button onclick="buyUpgrade('tier2')" id="btn-tier2" class="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors font-mono shadow-md shadow-cyan-950/20">
+                Cost: <span id="cost-tier2">100</span>
+            </button>
+        </div>
+
+        
+        <div id="upgrade-tier3" class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl transition-all">
+            <div>
+                <h3 class="font-bold text-sm text-white">Hack Club Server Node</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Generates +10 LoC every second.</p>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Owned: <span id="owned-tier3" class="font-mono text-slate-300">0</span></p>
+            </div>
+            <button onclick="buyUpgrade('tier3')" id="btn-tier3" class="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors font-mono shadow-md shadow-cyan-950/20">
+                Cost: <span id="cost-tier3">500</span>
+            </button>
+        </div>
+    </section>
+
+    
+    <script>
+        // Game State Variables
+        let linesOfCode = 0;
+        let linesPerSecond = 0;
+        let clickPower = 1;
+
+        // Upgrade Configurations Profile Array
+        const upgrades = {
+            tier1: { cost: 15, baseCost: 15, owned: 0, lpsIncrease: 1, clickIncrease: 0 },
+            tier2: { cost: 100, baseCost: 100, owned: 0, lpsIncrease: 0, clickIncrease: 1 },
+            tier3: { cost: 500, baseCost: 500, owned: 0, lpsIncrease: 10, clickIncrease: 0 }
+        };
+
+        // DOM Elements Map Cache
+        const clickBtn = document.getElementById("clickBtn");
+        const codeDisplay = document.getElementById("codeDisplay");
+        const lpsDisplay = document.getElementById("lpsDisplay");
+
+        // Action Trigger Event Listeners
+        clickBtn.addEventListener("click", () => {
+            linesOfCode += clickPower;
+            updateDisplay();
+        });
+
+        // Upgrade Processing Logic
+        function buyUpgrade(tier) {
+            const up = upgrades[tier];
+            if (linesOfCode >= up.cost) {
+                linesOfCode -= up.cost;
+                up.owned++;
+                
+                // Adjust Core Factors
+                linesPerSecond += up.lpsIncrease;
+                clickPower += up.clickIncrease;
+                
+                // Exponential Scale Cost Growth Engine
+                up.cost = Math.floor(up.baseCost * Math.pow(1.15, up.owned));
+                
+                updateDisplay();
+            }
+        }
+
+        // Global UI Refresh Vector Renderer
+        function updateDisplay() {
+            // Main Counters Layout
+            codeDisplay.innerText = Math.floor(linesOfCode).toLocaleString();
+            lpsDisplay.innerText = linesPerSecond.toLocaleString();
+
+            // Loop and process shop item elements states
+            for (const key in upgrades) {
+                const up = upgrades[key];
+                document.getElementById(`cost-${key}`).innerText = up.cost.toLocaleString();
+                document.getElementById(`owned-${key}`).innerText = up.owned;
+                
+                // Handle HTML attribute disabled status based on balance metrics
+                const btn = document.getElementById(`btn-${key}`);
+                if (linesOfCode >= up.cost) {
+                    btn.removeAttribute("disabled");
+                } else {
+                    btn.setAttribute("disabled", "true");
+                }
+            }
+        }
+
+        // Automated Core Tick Engine Process Loop (Runs at 10Hz/100ms precision)
+        setInterval(() => {
+            if (linesPerSecond > 0) {
+                linesOfCode += (linesPerSecond / 10);
+                updateDisplay();
+            } else {
+                // Keep evaluating button disables even if passive income hasn't started
+                updateDisplay();
+            }
+        }, 100);
+
+        // Run Init Draw Routine
+        updateDisplay();
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
+
