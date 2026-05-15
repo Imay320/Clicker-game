@@ -1,4 +1,4 @@
-# 💻 [Insert Your Game Name Here]
+# 💻 [Clicker game]
 
 A sleek, fast-paced web game built for the Hack Club community. Play it directly in your browser!
 
